@@ -2,7 +2,13 @@ const { Pool } = require("pg");
 
 class NotesService {
   constructor() {
-    this._pool = new Pool();
+    this._pool = new Pool({
+      user: process.env.PGUSER,
+      host: process.env.PGHOST,
+      database: process.env.PGDATABASE,
+      password: process.env.PGPASSWORD,
+      port: process.env.PGPORT
+    });
   }
 
   async getNotes(userId) {

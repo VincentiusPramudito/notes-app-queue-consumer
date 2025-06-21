@@ -9,13 +9,19 @@ const init = async () => {
   const mailSender = new MailSender();
   const listener = new Listener(notesService, mailSender);
 
-  const connection = await amqp.connect(decodeURIComponent(process.env.RABBITMQ_SERVER));
-  const channel = await connection.createChannel();
+  try {
+    const connection = await amqp.connect(process.env.RABBITMQ_SERVER);
+    const channel = await connection.createChannel();
+  
+    await channel.assertQueue('export:notes', {
+      durable: true,
+    });
+  
+    channel.consume('export:notes', listener.listen, { noAck: true });
+    
+  } catch (error) {
+    console.log(error)
+  }
 
-  await channel.assertQueue('export:notes', {
-    durable: true,
-  });
-
-  channel.consume('export:notes', listener.listen, { noAck: true });
 };
 init();
