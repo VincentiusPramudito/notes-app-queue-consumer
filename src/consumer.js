@@ -12,12 +12,14 @@ const init = async () => {
   try {
     const connection = await amqp.connect(process.env.RABBITMQ_SERVER);
     const channel = await connection.createChannel();
+
+    console.log(connection, '<====')
   
-    await channel.assertQueue('export:notes', {
-      durable: true,
-    });
+    // await channel.assertQueue('export:notes', {
+    //   durable: true,
+    // });
   
-    channel.consume('export:notes', listener.listen, { noAck: true });
+    // channel.consume('export:notes', listener.listen, { noAck: true });
     
   } catch (error) {
     console.log(error)
